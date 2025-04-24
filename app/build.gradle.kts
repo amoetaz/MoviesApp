@@ -44,6 +44,9 @@ android {
 
 dependencies {
 
+    implementation(project(path = ":domain"))
+    implementation(project(path = ":data"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -63,4 +66,11 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+
+    //Retrofit
+    api(libs.retrofit)
+    api(libs.converter.gson)
+    api(libs.converter.moshi)
+    api(libs.logging.interceptor)
+    api(libs.gson)
 }
