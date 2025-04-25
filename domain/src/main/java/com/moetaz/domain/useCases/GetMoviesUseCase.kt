@@ -5,5 +5,5 @@ import javax.inject.Inject
 
 class GetMoviesUseCase @Inject constructor(private val movieRepository: MoviesRepository) {
 
-    suspend fun invoke() = movieRepository.getMovies()
+    suspend operator fun invoke() = movieRepository.getMoviesPager("cc211d6ac3a05560eb808b9938cefe4e")
 }

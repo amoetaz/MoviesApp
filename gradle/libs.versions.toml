@@ -1,6 +1,6 @@
 [versions]
 agp = "8.9.2"
-kotlin = "2.0.21"
+kotlin = "2.0.0"
 coreKtx = "1.10.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -12,10 +12,13 @@ appcompat = "1.6.1"
 material = "1.10.0"
 retrofit = "2.9.0"
 loggingInterceptor = "5.0.0-alpha.10"
-coil="2.5.0"
+coil="3.1.0"
 gson = "2.10.1"
 hiltAndroid = "2.51.1"
-
+pagingCommonAndroid = "3.3.6"
+navigation-compose = "2.8.9"
+hiltNavigationCompose = "1.2.0"
+coilCompose = "3.0.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -40,8 +43,17 @@ converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref
 converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
 logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "loggingInterceptor" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation-compose" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltAndroid" }
+hilt-lifecycle = { module = "com.google.dagger:hilt-lifecycle-viewmodel", version = "1.0.0-alpha03" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+
+androidx-paging-common-android = { group = "androidx.paging", name = "paging-common-android", version.ref = "pagingCommonAndroid" }
+paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "pagingCommonAndroid" }
+coil = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

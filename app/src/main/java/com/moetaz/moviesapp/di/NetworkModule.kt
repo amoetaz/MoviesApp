@@ -1,13 +1,13 @@
 package com.moetaz.moviesapp.di
 
 
-import com.moetaz.data.remote.MoviesRepositoryImp
 import com.moetaz.data.remote.MoviesService
+import com.moetaz.domain.repository.MoviesRepository
+import com.moetaz.domain.useCases.GetMoviesUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -39,10 +39,9 @@ object NetworkModule {
     @Named("retrofit")
     internal fun provideOkHttpClient(
         httpLoggingInterceptor: HttpLoggingInterceptor,
-        cache: Cache
     ): OkHttpClient {
         return OkHttpClient.Builder().apply {
-            cache(cache)
+
             connectTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS)
             readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
             writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
@@ -54,7 +53,7 @@ object NetworkModule {
     @Singleton
     internal fun provideRetrofit(@Named("retrofit") client: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("")
+            .baseUrl("https://api.themoviedb.org/3/")
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -66,7 +65,9 @@ object NetworkModule {
         return retrofit.create(MoviesService::class.java)
     }
 
+
+
     @Singleton
     @Provides
-    fun provideMoviesRepository(moviesService: MoviesService) = MoviesRepositoryImp(moviesService)
+    fun provideMovieListUseCase(moviesRepository: MoviesRepository) = GetMoviesUseCase(moviesRepository)
 }
