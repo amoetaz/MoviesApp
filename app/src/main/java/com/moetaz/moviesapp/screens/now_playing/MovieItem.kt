@@ -1,5 +1,6 @@
 package com.moetaz.moviesapp.screens.now_playing
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,16 +28,24 @@ fun MovieItemPreview(modifier: Modifier = Modifier) {
         movie = Movie(
             id = 1,
             title = "Movie Title",
-            posterUrl = "https://image.tmdb.org/t/p/w500/kqjL17yufvn9OVLyXYpvtyrF"))
+            posterUrl = "https://image.tmdb.org/t/p/w500/kqjL17yufvn9OVLyXYpvtyrF",
+            releaseDate = "",
+            originalLanguage = "",
+            overview = "",
+            voteAverage = 0.0f,
+            voteCount = 0
+        ),
+        )
 }
 
 @Composable
-fun MovieItem(movie: Movie) {
+fun MovieItem(movie: Movie , onItemClick: (Int) -> Unit = {}) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .width(150.dp)
             .wrapContentHeight()
+            .clickable { onItemClick(movie.id) }
     ) {
         AsyncImage(
             model = movie.posterUrl,

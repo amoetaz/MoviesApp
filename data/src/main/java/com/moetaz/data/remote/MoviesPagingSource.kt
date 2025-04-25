@@ -3,6 +3,7 @@ package com.moetaz.data.remote
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.moetaz.data.toMovie
 import com.moetaz.domain.models.Movie
 
 class MoviesPagingSource(
@@ -22,7 +23,6 @@ class MoviesPagingSource(
             )
 
         } catch (e: Exception) {
-            Log.d("TAG", "load: ${e}")
             LoadResult.Error(e)
         }
     }

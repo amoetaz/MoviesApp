@@ -25,14 +25,17 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.moetaz.domain.models.Movie
 
 @Composable
-fun MoviesListScreen(nowPlayingViewmodel: NowPlayingViewmodel = hiltViewModel()){
+fun MoviesListScreen(
+    nowPlayingViewmodel: NowPlayingViewmodel = hiltViewModel(),
+    onItemClick: (Int) -> Unit
+) {
     val nowPlayingMovies = nowPlayingViewmodel.movies.collectAsLazyPagingItems()
 
-    MovieGridScreen(movies = nowPlayingMovies)
+    MovieGridScreen(movies = nowPlayingMovies , onItemClick = onItemClick)
 }
 
 @Composable
-fun MovieGridScreen(movies: LazyPagingItems<Movie>) {
+fun MovieGridScreen(movies: LazyPagingItems<Movie> , onItemClick: (Int) -> Unit) {
     var searchQuery by remember { mutableStateOf("") }
 
     val filteredMovies = remember(searchQuery, movies.itemSnapshotList.items) {
@@ -42,7 +45,9 @@ fun MovieGridScreen(movies: LazyPagingItems<Movie>) {
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)) {
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
@@ -61,7 +66,7 @@ fun MovieGridScreen(movies: LazyPagingItems<Movie>) {
             if (filteredMovies != null) {
                 // When searching: use filtered list (local)
                 items(filteredMovies.size) { index ->
-                    MovieItem(movie = filteredMovies[index])
+                    MovieItem(movie = filteredMovies[index] , onItemClick = onItemClick)
                 }
 
                 if (filteredMovies.isEmpty()) {
@@ -76,7 +81,7 @@ fun MovieGridScreen(movies: LazyPagingItems<Movie>) {
             } else {
 
                 items(movies.itemCount) { index ->
-                    movies[index]?.let { MovieItem(movie = it) }
+                    movies[index]?.let { MovieItem(movie = it  , onItemClick = onItemClick) }
                 }
 
             }
