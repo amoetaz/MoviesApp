@@ -51,7 +51,11 @@ class NowPlayingViewmodel @Inject constructor(
                 .first()
                 .let { cachedList ->
                     if (cachedList.isNotEmpty()) {
-                        val paged = PagingData.from(cachedList.map { it.toMovie() })
+                        val sortedList = cachedList
+                            .map { it.toMovie() }
+                            .sortedByDescending { it.releaseDate }
+
+                        val paged = PagingData.from(sortedList)
                         _movies.value = paged
                     } else {
                        getMovies()

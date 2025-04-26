@@ -10,10 +10,16 @@ import androidx.work.Configuration
 import androidx.work.Constraints
 
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import androidx.work.Worker
+import androidx.work.WorkerFactory
+import androidx.work.WorkerParameters
+import com.moetaz.data.local.MoviesLocalDataSource
+import com.moetaz.data.remote.MoviesService
 import com.moetaz.data.workmanager.MoviesSyncWorker
 import dagger.hilt.android.HiltAndroidApp
 import java.util.concurrent.TimeUnit
@@ -23,12 +29,12 @@ import javax.inject.Inject
 class MovieApp : Application() , Configuration.Provider {
 
     @Inject
-    lateinit var workerFactory: HiltWorkerFactory
+    lateinit var workerFactory: MyWorkerFactory
 
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
-        scheduleMoviesSyncWorker(this)
+        scheduleMoviesSyncWorker()
     }
 
 
@@ -47,22 +53,13 @@ class MovieApp : Application() , Configuration.Provider {
         }
     }
 
-    fun scheduleMoviesSyncWorker(context: Context) {
-        val workManager = WorkManager.getInstance(context)
+    fun scheduleMoviesSyncWorker() {
+        val workManager = WorkManager.getInstance(this)
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .setRequiresBatteryNotLow(true)
             .build()
 
-        // One-time sync (runs now)
-        val oneTimeSync = OneTimeWorkRequestBuilder<MoviesSyncWorker>()
-            .setConstraints(constraints)
-            .setInitialDelay(0, TimeUnit.MILLISECONDS)
-            .build()
-
-        workManager.enqueue(oneTimeSync)
-
-        // Periodic sync (runs every 24h)
         val periodicSync = PeriodicWorkRequestBuilder<MoviesSyncWorker>(24, TimeUnit.HOURS)
             .setConstraints(constraints)
             .build()
@@ -81,4 +78,23 @@ class MovieApp : Application() , Configuration.Provider {
             .build()
 
 
+}
+
+class MyWorkerFactory @Inject constructor(
+    private val  moviesService: MoviesService,
+    private val localDataSource: MoviesLocalDataSource // Injecting the service into the factory
+) : WorkerFactory() {
+
+    override fun createWorker(
+        appContext: Context,
+        workerClassName: String,
+        workerParameters: WorkerParameters
+    ): MoviesSyncWorker? {
+        return when (workerClassName) {
+            MoviesSyncWorker::class.java.name -> {
+                MoviesSyncWorker(appContext, workerParameters, moviesService,localDataSource)
+            }
+            else -> null
+        }
+    }
 }

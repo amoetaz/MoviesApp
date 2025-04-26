@@ -17,6 +17,10 @@ import com.moetaz.data.remote.MoviesService
 import com.moetaz.data.toMovie
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 
 @HiltWorker
 class MoviesSyncWorker @AssistedInject constructor(
@@ -31,6 +35,7 @@ class MoviesSyncWorker @AssistedInject constructor(
         val notification = NotificationCompat.Builder(applicationContext, "movies_sync_channel")
             .setContentTitle("Syncing Movies")
             .setContentText("Fetching latest movies in background...")
+            .setSmallIcon(R.drawable.ic_launcher_background)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
 
@@ -43,21 +48,34 @@ class MoviesSyncWorker @AssistedInject constructor(
         setForeground(getForegroundInfo())
 
         return try {
+
+            val allRemoteMovies = mutableListOf<MovieEntity>()
             var page = 1
-            val allMovies = mutableListOf<MovieEntity>()
-
             while (true) {
-                val response = moviesService.getPagingMovies(BuildConfig.API_KEY, page)
-                allMovies += response.results.map { it.toMovie().toMovieEntity() }
-
+                val response = withContext(Dispatchers.IO) {
+                    moviesService.getPagingMovies(BuildConfig.API_KEY, page)
+                }
+                allRemoteMovies += response.results.map { it.toMovie().toMovieEntity() }
                 if (page >= response.totalPages) break
                 page++
             }
 
-            moviesLocalDataSource.deleteAll()
-            moviesLocalDataSource.insertAll(allMovies)
+            val localMovies = moviesLocalDataSource.movies.first()
+
+
+            val isDifferent = allRemoteMovies.size != localMovies.size ||
+                    allRemoteMovies.any { remoteMovie ->
+                        localMovies.none { it.id == remoteMovie.id }
+                    }
+
+            if (isDifferent) {
+                moviesLocalDataSource.deleteAll()
+                moviesLocalDataSource.insertAll(allRemoteMovies)
+            }
+
             Result.success()
         } catch (e: Exception) {
+            Log.e("TAG", "Error syncing movies: ${e.message}")
             Result.retry()
         }
     }
