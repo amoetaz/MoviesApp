@@ -19,3 +19,9 @@
     # If you keep the line number information, uncomment this to
     # hide the original source file name.
     #-renamesourcefileattribute SourceFile
+
+-keep class com.moetaz.data.workmanager.MoviesSyncWorker { *; }
+-keepclassmembers class com.moetaz.data.workmanager.MoviesSyncWorker {
+    public <init>(android.content.Context,androidx.work.WorkerParameters);
+
+}

@@ -3,6 +3,7 @@ package com.moetaz.moviesapp.di
 import android.content.Context
 import com.moetaz.data.local.AppRoomDatabase
 import com.moetaz.data.local.MoviesDao
+import com.moetaz.data.local.MoviesLocalDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,7 +18,7 @@ class DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideCategoriesDao(@ApplicationContext context: Context): MoviesDao {
+    fun provideMoviesDao(@ApplicationContext context: Context): MoviesDao {
         val database = AppRoomDatabase.getDatabase(context)
         return database.moviesDao()
     }
@@ -26,6 +27,12 @@ class DatabaseModule {
     @Singleton
     fun provideAppDatabase(@ApplicationContext appContext: Context): AppRoomDatabase {
         return AppRoomDatabase.getDatabase(appContext)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMoviesLocalDataSource(moviesDao: MoviesDao): MoviesLocalDataSource {
+        return MoviesLocalDataSource(moviesDao)
     }
 
 

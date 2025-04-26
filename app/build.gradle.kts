@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.paging.common.android)
     implementation(libs.paging.compose)
+    implementation(libs.androidx.hilt.work)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -68,6 +69,10 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+
+    implementation("androidx.hilt:hilt-work:1.2.0")
+    implementation ("androidx.work:work-runtime-ktx:2.9.0")
+    ksp(libs.hilt.compiler2)
    // ksp(libs.hilt.lifecycle)
 
     //Retrofit
@@ -86,6 +91,8 @@ dependencies {
     implementation(libs.room.compiler)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
+    implementation(libs.androidx.work.runtime.ktx)
+
 
 
 }

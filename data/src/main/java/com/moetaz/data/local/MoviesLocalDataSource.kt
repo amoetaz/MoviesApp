@@ -1,12 +1,10 @@
 package com.moetaz.data.local
 
 import androidx.annotation.WorkerThread
-import com.moetaz.data.local.MovieEntity
-import com.moetaz.data.local.MoviesDao
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class CategoriesLocalDataSource @Inject constructor(private val dao: MoviesDao) {
+class MoviesLocalDataSource @Inject constructor(private val dao: MoviesDao) {
 
     val movies: Flow<List<MovieEntity>> = dao.getAllData()
 
