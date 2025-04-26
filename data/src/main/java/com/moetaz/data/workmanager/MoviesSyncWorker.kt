@@ -7,6 +7,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import com.moetaz.data.BuildConfig
 import com.moetaz.data.R
 import com.moetaz.data.local.MovieEntity
 import com.moetaz.data.local.MoviesDao
@@ -46,7 +47,7 @@ class MoviesSyncWorker @AssistedInject constructor(
             val allMovies = mutableListOf<MovieEntity>()
 
             while (true) {
-                val response = moviesService.getPagingMovies("cc211d6ac3a05560eb808b9938cefe4e", page)
+                val response = moviesService.getPagingMovies(BuildConfig.API_KEY, page)
                 allMovies += response.results.map { it.toMovie().toMovieEntity() }
 
                 if (page >= response.totalPages) break

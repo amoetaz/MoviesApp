@@ -67,12 +67,6 @@ class MovieApp : Application() , Configuration.Provider {
             .setConstraints(constraints)
             .build()
 
-
-
-        // Enqueue the one-time sync immediately
-
-
-        // Enqueue the periodic sync (will only run every 24h)
         workManager.enqueueUniquePeriodicWork(
             "SyncMovies",
             ExistingPeriodicWorkPolicy.KEEP,

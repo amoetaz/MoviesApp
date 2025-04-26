@@ -2,6 +2,7 @@ package com.moetaz.moviesapp.screens.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.moetaz.data.BuildConfig
 import com.moetaz.domain.models.Movie
 import com.moetaz.domain.useCases.GetMovieDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,7 +34,7 @@ class MovieDetailViewModel @Inject constructor(
 
     fun getMovieById(movieId: Int) {
         viewModelScope.launch {
-            getMovieDetailUseCase.invoke(movieId = movieId, apiKey = "cc211d6ac3a05560eb808b9938cefe4e")
+            getMovieDetailUseCase.invoke(movieId = movieId, apiKey = BuildConfig.API_KEY)
                 .collect { result ->
                     when (result) {
                         is com.moetaz.domain.models.Result.Error -> {

@@ -2,6 +2,7 @@ package com.moetaz.data.remote
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import com.moetaz.data.local.MoviesLocalDataSource
 import com.moetaz.data.response.MovieDto
 import com.moetaz.data.toMovie
 import com.moetaz.domain.models.Movie
@@ -15,14 +16,17 @@ import kotlinx.coroutines.flow.flowOn
 
 import javax.inject.Inject
 
-class MoviesRepositoryImp @Inject constructor(private val moviesService: MoviesService) :
+class MoviesRepositoryImp @Inject constructor(
+    private val moviesService: MoviesService,
+    private val localDataSource: MoviesLocalDataSource
+) :
     MoviesRepository {
-    override suspend fun getMoviesPager(apiKey: String) = Pager(
+    override suspend fun getMoviesPager() = Pager(
         config = PagingConfig(
             pageSize = 10,
             enablePlaceholders = false
         ),
-        pagingSourceFactory = { MoviesPagingSource(moviesService, apiKey) }
+        pagingSourceFactory = { MoviesPagingSource(localDataSource,moviesService) }
     ).flow
 
     override suspend fun getMovieDetail(apiKey: String, movieId: Int): Flow<Result<Movie>> {
@@ -30,7 +34,7 @@ class MoviesRepositoryImp @Inject constructor(private val moviesService: MoviesS
             emit(Result.Loading)
 
             try {
-                val response = moviesService.getMovieDetail( movieId , apiKey)
+                val response = moviesService.getMovieDetail(movieId, apiKey)
                 val movie = response.toMovie()
                 emit(Result.Success(movie))
             } catch (e: Exception) {

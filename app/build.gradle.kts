@@ -1,16 +1,26 @@
+import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("com.google.devtools.ksp")
+    id("kotlin-kapt")
     alias(libs.plugins.google.dagger.hilt.android)
     id("kotlin-parcelize")
+    id ("dagger.hilt.android.plugin")
 }
 
 android {
     namespace = "com.moetaz.moviesapp"
     compileSdk = 35
 
+    val apiUrlPropertiesFile = rootProject.file("keys.properties")
+    val apiUrlProperties = Properties().apply {
+        load(apiUrlPropertiesFile.inputStream())
+    }
+    defaultConfig {
+        buildConfigField("String", "API_KEY",  "\"${apiUrlProperties.getProperty("API_KEY") ?: ""}\"")
+    }
     defaultConfig {
         applicationId = "com.moetaz.moviesapp"
         minSdk = 24
@@ -19,6 +29,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+
+
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
@@ -65,15 +81,13 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-    // Hilt
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-
     implementation("androidx.hilt:hilt-work:1.2.0")
     implementation ("androidx.work:work-runtime-ktx:2.9.0")
-    ksp(libs.hilt.compiler2)
-   // ksp(libs.hilt.lifecycle)
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+    testImplementation ("org.mockito.kotlin:mockito-kotlin:4.1.0")
+    testImplementation ("org.mockito:mockito-core:5.2.0")
+    testImplementation ("io.mockk:mockk:1.13.5")
 
     //Retrofit
     api(libs.retrofit)
@@ -87,11 +101,17 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
-    //Room
-    implementation(libs.room.compiler)
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
-    implementation(libs.androidx.work.runtime.ktx)
+
+    val roomVersion = "2.7.1" // or latest version
+
+    // Room components
+    implementation("androidx.room:room-runtime:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion") // Kotlin Extensions
+
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
 
 
 
